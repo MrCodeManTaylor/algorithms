@@ -1,0 +1,297 @@
+/*
+	Algorithms Data Structures	|	Dr. Kurtonina	|	Assignment 02	|	Author: Mitchell Taylor
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+void array_Accomodation(int *array1, int size);
+void display(int *array2, int size);
+void merge(int *a, int *b, int *c, int size1, int size2);
+void swap(int *a, int *b);
+void merge_Sort(int *x, int size);
+void insertion_Sort(int *a, int size);
+void insertion_Sort_Reversed(int *a, int size);
+void selection_Sort(int *a, int size);
+void quick_Sort(int *a, int low, int high);
+void bubble_Sort(int *a, int size);
+void counting_Sort(int *a, int size);
+
+void main()
+{
+	int *a;
+	int size, input, n, max;
+
+	printf("How many numbers do you want to accomodate your array?\n");
+	scanf_s("%d", &size);
+
+	printf("Enter your numbers, sorted from least to greatest. Place spaces between each numeric or press enter after each item.\n");
+	a = (int*) calloc(size, sizeof(int));
+	array_Accomodation(a,size);
+
+	printf("This is your original array.\n");
+	display(a,size);
+
+	printf("Please enter 1 for merge sort, 2 for insertion sort, 3 for insertion sort reversed, 4 for selection sort\n5 for quick sort, 6 for bubble sort, 7 for counting sort,\n");
+	scanf("%d", &input);
+
+
+	switch(input){
+	case 1:
+		merge_Sort(a,size);
+		printf("This is your sorted array.\n");
+		display(a, size);
+		break;
+	case 2:
+		insertion_Sort(a, size);
+		printf("This is your sorted array.\n");
+		display(a, size);
+		break;
+	case 3:
+		insertion_Sort_Reversed(a, size);
+		printf("This is your sorted array.\n");
+		display(a, size);
+		break;
+	case 4: 
+		selection_Sort(a, size);
+		printf("This is your sorted array.\n");
+		display(a, size);
+		break;
+	case 5:
+		n = sizeof(a)/sizeof(a[0]);
+		quick_Sort(a, 0, n-1);
+		printf("This is your sorted array.\n");
+		display(a, size);
+		break;
+	case 6: 
+		bubble_Sort(a, size);
+		printf("This is your sorted array.\n");
+		display(a, size);
+		break;
+	case 7: 
+		max = find_Max(a, size);
+		counting_Sort(a, n, max);
+		printf("This is your sorted array.\n");
+		display(a, size);
+		break;
+
+	}
+}
+
+int find_Max(int a[], int size){
+
+	int i,max = a[0];
+	for(i = 0; i < size-1; i++)
+		if(a[i] > max)
+			max = a[i];
+
+	return max;
+}
+
+void counting_Sort(int a[],int n,int max){
+    int count[max]={0};
+    int i;
+    int out[n];
+    
+    for(i=0;i<n;i++)
+    ++count[a[i]];
+    
+    for(i=1;i<max;i++)
+    count[i]+=count[i-1];
+    
+    for(i=n-1;i>=0;i--){
+        out[count[a[i]]-1]=a[i];
+        --count[a[i]];
+    }
+    
+    for(i=0;i<n;i++)
+    a[i]=out[i];
+    
+}
+
+void bubble_Sort(int a[], int size) 
+{ 
+   int i, j; 
+   for (i = 0; i < size-1; i++)
+       for (j = 0; j < size-i-1; j++)  
+           if (a[j] > a[j+1]) 
+              swap(&a[j], &a[j+1]); 
+} 
+
+int partition (int a[], int low, int high) 
+{ 
+    int piv = a[high];    
+    int i = (low - 1); 
+  
+    for (int j = low; j <= high- 1; j++) 
+    { 
+
+        if (a[j] <= piv) 
+        { 
+            i++;   
+            swap(&a[i], &a[j]); 
+        } 
+    } 
+    swap(&a[i + 1], &a[high]); 
+    return (i + 1); 
+} 
+void quick_Sort(int a[], int low, int high) 
+{ 
+    if (low < high) 
+    { 
+        int p = partition(a, low, high); 
+  
+        // Separately sort elements before 
+        // partition and after partition 
+        quickSort(a, low, p - 1); 
+        quickSort(a, p + 1, high); 
+    } 
+} 
+
+
+// Complexity O(n^2)
+void insertion_Sort(int *a, int size){
+
+	int i, key, j; 
+    for (i = 1; i < size; i++) 
+    { 
+		key = a[i]; 
+        j = i-1; 
+  
+        /* Move all elements that are greater than the 'sorted' segment of our array that 
+		   are greater than the key up a singular position to free up the segment for the
+		   key's placement.
+		*/
+        while (j >= 0 && a[j] > key) 
+        { 
+            a[j+1] = a[j]; 
+            j = j-1; 
+        } 
+		// Place the key in the newly created 'hole'.
+        a[j+1] = key; 
+    } 
+
+}
+
+//Complexity O(n^2)
+void insertion_Sort_Reversed(int *a, int size){
+
+	int i, key, j;
+	for(j = size-2; j <= 0 ; j--)
+	{
+		key=a[j];
+		i=j+1; 
+
+		/* Move all elements that are less than the 'sorted' segment of our array that 
+		   are less than the key down a singular position to free up the segment for the
+		   key's placement.
+		*/
+		while(i <= size-1 && a[i]< key)
+		{
+			a[i-1]=a[i]; 
+			i = i+1;
+		}
+		// Place the key in the newly created 'hole'.
+		a[i-1]=key; 
+	}
+}
+
+//Complexity O(n^2)
+void selection_Sort(int *a, int size){
+
+	int i, j, min_index; 
+  
+    // Sift through boundaries of unsorted segment
+    for (i = 0; i < size-1; i++) 
+    { 
+        // Find the smallest element in unsorted segment
+        min_index = i; 
+        for (j = i+1; j < size; j++) 
+          if (a[j] < a[min_index]) 
+            min_index = j; 
+  
+        // Swap the found minimum element with the first element 
+        swap(&a[min_index], &a[i]); 
+    } 
+
+}
+
+void swap(int *a, int *b) 
+{ 
+    int temp = *a; 
+    *a = *b; 
+    *b = temp; 
+} 
+
+void merge(int *a, int *b, int *c, int size1, int size2){
+
+	int i=0, j=0, k=0, index;
+	
+	while(i<size1 && j<size2){
+		if(a[i]<=b[j]){
+			c[k]=a[i];
+			i++;
+			k++;
+		}
+		if(a[i]>=b[j]){
+			c[k]=a[j];
+			j++;
+			k++;
+		}
+	}
+
+	if(i==size1){
+		for(index = j; index < size2; index++){
+			c[k]=b[index];
+			k++;
+		}
+	}
+
+	if(j==size2){
+		for(index = i; index < size1; index++){
+			c[k]=a[index];
+			k++;
+		}
+	}
+}
+
+void array_Accomdation(int *array1, int size){
+
+	int i;
+
+	for(i = 0; i < size; i++){
+		scanf_s("%d",&array1[i]);
+
+	}
+}
+
+//Complexity O(nlog(n))
+void merge_Sort(int *x, int n){
+
+	int *z, *y, ySize = n/2, zSize = n-(n/2),i,j;
+
+	if(n > 1){
+		y = (int*) calloc(ySize, sizeof(int));
+		
+		for(i = 0, j = 0; j< ySize; i++, j++){
+			y[j] = x[i];
+		}
+		z = (int*) calloc(zSize, sizeof(int));
+		for(i = n/2, j = 0; j < ySize; i++, j++){
+			z[j]=x[i];
+		}
+		merge_Sort(y, ySize);
+		merge_Sort(z, zSize);
+		merge(y, z, x, ySize, zSize);
+	}
+}
+
+void display(int *array2, int size){
+
+	int i;
+
+	for( i = 0; i < size; i++){
+		printf("%2d ", array2[i]);
+	}
+	printf("\n");
+}
